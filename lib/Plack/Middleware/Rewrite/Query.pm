@@ -129,4 +129,6 @@ all keys and values.
 
 L<Plack::Middleware::Rewrite>
 
+=encoding utf8
+
 =cut
