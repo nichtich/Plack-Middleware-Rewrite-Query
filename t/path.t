@@ -4,7 +4,7 @@ use Plack::Test;
 use Plack::Builder;
 use HTTP::Request::Common;
 
-unless ( eval { use Plack::Middleware::Rewrite; 1; } ) {
+unless ( eval { require Plack::Middleware::Rewrite; 1; } ) {
     plan skip_all => 'Plack::Middleware::Rewrite not installed';
 }
 
