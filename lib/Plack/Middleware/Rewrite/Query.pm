@@ -1,5 +1,5 @@
 use strict;
-package Plack::Middleware::RewriteQuery;
+package Plack::Middleware::Rewrite::Query;
 #ABSTRACT: Safely modify the QUERY_STRING of a PSGI request
 #VERSION
 
@@ -40,7 +40,7 @@ sub call {
 =head1 SYNOPSIS
 
     builder {
-        enable 'RewriteQuery', rules => sub {
+        enable 'Rewrite::Query', rules => sub {
             my $i; 
             $_ = Hash::MultiValue->new(map {
                 ($i++ % 2) ? $_ : do { 
@@ -67,8 +67,6 @@ query is also aliased to C<$_> for easy manipulation.
 The core function C<rewrite>, defined by this middleware can also be used in
 different context, for instance to modify query parameters in another
 middleware.
-
-    Plack::Middleware::RewriteQuery::rewrite
 
 =head1 SEE ALSO
 

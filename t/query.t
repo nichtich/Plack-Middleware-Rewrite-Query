@@ -17,7 +17,7 @@ sub test_app(@) { ##no critique
 }
 
 my $rebuild = builder {
-    enable 'RewriteQuery', rules => sub { };
+    enable 'Rewrite::Query', rules => sub { };
     $app;
 };
 
@@ -25,7 +25,7 @@ test_app $rebuild, '?a=x&a= &b', 'a=x&a=%20&b=';
 test_app $rebuild, '?foo+bar', 'foo=&bar=';
 
 my $modify1 = builder {
-    enable 'RewriteQuery', rules => sub {
+    enable 'Rewrite::Query', rules => sub {
         # rename all 'foo' paramaters to 'bar'
         if (my @values = $_->get_all('foo')) {
             $_->set('foo');
@@ -38,7 +38,7 @@ my $modify1 = builder {
 test_app $modify1, '?foo=baz&foo=doz&x=1', 'x=1&bar=baz&bar=doz';
 
 my $modify2 = builder {
-    enable 'RewriteQuery', rules => sub {
+    enable 'Rewrite::Query', rules => sub {
         my $i; # rename all 'foo' paramaters to 'bar', keeping order
         $_ = Hash::MultiValue->new(map {
             ($i++ % 2) ? $_ : do { s/^foo$/bar/; $_ } 
