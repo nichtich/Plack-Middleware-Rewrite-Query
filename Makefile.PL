@@ -23,7 +23,7 @@ my %WriteMakefileArgs = (
     "Plack" => "1.0"
   },
   "TEST_REQUIRES" => {},
-  "VERSION" => "0.1.0",
+  "VERSION" => "0.1.1",
   "test" => {
     "TESTS" => "t/*.t"
   }
