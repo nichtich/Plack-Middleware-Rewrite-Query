@@ -17,36 +17,40 @@ sub test_app(@) { ##no critique
 }
 
 my $rebuild = builder {
-    enable 'Rewrite::Query', rules => sub { };
+    enable 'Rewrite::Query', modify => sub { };
     $app;
 };
 
 test_app $rebuild, '?a=x&a= &b', 'a=x&a=%20&b=';
 test_app $rebuild, '?foo+bar', 'foo=&bar=';
 
-my $modify1 = builder {
-    enable 'Rewrite::Query', rules => sub {
-        # rename all 'foo' paramaters to 'bar'
-        if (my @values = $_->get_all('foo')) {
-            $_->set('foo');
-            $_->set('bar', @values);
-        }
+my $modify = builder {
+    # rename all 'foo' paramaters to 'bar'
+    enable 'Rewrite::Query', map => sub {
+        my ($key, $value) = @_;
+        (($key eq 'foo' ? 'bar' : $key), $value);
+    };
+    # add a query parameter 'doz' with value '1'
+    enable 'Rewrite::Query', modify => sub {
+        $_->add('doz', 1);
     };
     $app;
 };
 
-test_app $modify1, '?foo=baz&foo=doz&x=1', 'x=1&bar=baz&bar=doz';
+test_app $modify, '?foo=baz&foo=doz&doz=0', 'bar=baz&bar=doz&doz=0&doz=1';
 
-my $modify2 = builder {
-    enable 'Rewrite::Query', rules => sub {
-        my $i; # rename all 'foo' paramaters to 'bar', keeping order
-        $_ = Hash::MultiValue->new(map {
-            ($i++ % 2) ? $_ : do { s/^foo$/bar/; $_ } 
-        } $_->flatten);
-    };
+$modify = builder {
+    enable 'Rewrite::Query', 
+        map => sub {
+            my ($key, $value) = @_;
+            (($key eq 'foo' ? 'bar' : $key), $value);
+        },
+        modify => sub {
+            $_->add('doz', 1);
+        };
     $app;
 };
 
-test_app $modify2, '?foo=baz&foo=doz&x=1', 'bar=baz&bar=doz&x=1';
+test_app $modify, '?foo=baz&foo=doz&doz=0', 'bar=baz&bar=doz&doz=0&doz=1';
 
 done_testing;
